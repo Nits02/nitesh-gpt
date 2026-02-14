@@ -2,7 +2,6 @@
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
   <img src="https://img.shields.io/badge/Google%20Gemini-AI%20Powered-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini"/>
   <img src="https://img.shields.io/badge/Gradio-Web%20UI-FF7C00?style=for-the-badge&logo=gradio&logoColor=white" alt="Gradio"/>
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License"/>
 </p>
 
 <h1 align="center">🤖 Nitesh-GPT</h1>
@@ -315,14 +314,13 @@ Simply add more text to `me/summary.txt` — the AI will automatically use it. Y
 
 ---
 
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
----
-
 <p align="center">
   <strong>Built with ❤️ by <a href="https://github.com/Nits02">Nitesh Sharma</a></strong>
+</p>
+<p align="center">
+  <a href="https://thedataarch.com/">🌐 Website</a> &nbsp;•&nbsp;
+  <a href="https://www.linkedin.com/in/nsharma02/">💼 LinkedIn</a> &nbsp;•&nbsp;
+  <a href="https://github.com/Nits02">🐙 GitHub</a>
 </p>
 <p align="center">
   <em>If you found this useful, give it a ⭐ on GitHub!</em>

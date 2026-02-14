@@ -1,0 +1,184 @@
+========================================================================
+NITESH SHARMA — PERSONAL WEBSITE CONTENT (thedataarch.com)
+========================================================================
+
+ABOUT:
+Nitesh Chand Sharma is a passionate Data Solution Architect with over 18 years
+of experience designing and implementing data solutions that drive business value.
+He runs "The Data Architecture" blog (thedataarch.com) where he shares practical
+insights, lessons learned, and best practices from his journey in the data world.
+
+Tagline: "Bridging the gap between data architecture theory and real-world implementation"
+
+Website: https://thedataarch.com/
+LinkedIn: https://www.linkedin.com/in/nsharma02/
+Twitter/X: https://x.com/Nits02
+GitHub: https://github.com/Nits02
+
+========================================================================
+CAREER JOURNEY
+========================================================================
+
+--- Data Solution Architect (2020 – Present) ---
+Leading enterprise-scale data architecture programs across financial services,
+healthcare, and public sector domains. Specialized in designing secure, scalable
+data platforms on Azure and AWS. Driving adoption of modern paradigms like Data
+Mesh, Data Vault, event-driven architecture, and reference data management.
+
+Key Highlights:
+- Architected end-to-end Security Master Data Platform using Azure-native services
+- Led modernization of large-scale Rx Platform including migration to Data Vault on Delta Lake
+- Implemented Lambda Architecture and introduced strategic ingestion patterns
+- Designed and deployed CI/CD pipelines and DevOps for data workloads
+- Acted as architecture bridge between product, platform, and engineering teams
+
+--- Cloud & Data Architect (2018 – 2020) ---
+Designed and delivered cloud-native data platforms, driving legacy modernization
+and greenfield development using Azure Data Factory, Databricks, Synapse, and
+more. Migrated on-prem systems to the cloud, introduced meta-driven ingestion
+frameworks, and integrated advanced analytics and machine learning use cases.
+
+Key Highlights:
+- Delivered a unified data platform with real-time ingestion from CRM systems
+- Proposed and deployed data-driven child safety prediction models using clustering algorithms
+- Developed meta-driven ingestion and transformation frameworks for 20% faster onboarding
+- Defined data governance layers and designed scalable data zones on cloud
+
+--- Senior Data Engineer & Technical Lead (2016 – 2018) ---
+Led high-throughput ETL pipelines, performance tuning, and BI architecture for
+enterprise reporting environments. Built optimized data warehouses and drove the
+migration of legacy systems to more modern, performant platforms.
+
+Key Highlights:
+- Delivered 3000+ reports/day using optimized stored procedures and ETL flows
+- Reduced report execution time by 30% with stored procedure refactoring
+- Automated SSAS deployment and ETL monitoring for critical reports
+- Mentored engineering teams in Agile environments and ensured delivery cadence
+
+--- BI & Data Consultant (2013 – 2016) ---
+Architected and implemented integrated OLAP and ETL systems across retail and
+enterprise applications. Focused on building data integration layers between ERP,
+POS, and CRM platforms, while developing SSRS dashboards and data pipelines.
+
+Key Highlights:
+- Developed end-to-end OLAP environment integrating data from multiple source systems
+- Automated reporting and reduced manual effort by 20%
+- Implemented real-time replication logic and built a self-service reporting framework
+- Provided L2/L3 data support and training across global geographies
+
+--- Entrepreneur & Data Architect (2012 – 2014) ---
+Founded and ran a product-based business while also implementing ERP, data
+transformation, and BI reporting systems. Built custom SQL-based solutions for
+sales and finance dashboards.
+
+Key Highlights:
+- Implemented ERP with custom SSIS pipelines for ingestion and report generation
+- Built SSRS dashboards for order tracking, finance, and delivery status
+- Delivered 30+ client projects and scaled business across multiple geographies
+- Achieved ₹1 Cr+ in sales within 2 years through process automation and data analytics
+
+--- Data Support & Analytics Specialist (2007 – 2012) ---
+Owned full lifecycle of application support, customer onboarding, training, and
+data analytics reporting. Focused on product implementation, ETL troubleshooting,
+and dashboard creation in the CRM/ERP space.
+
+Key Highlights:
+- Delivered technical training and implemented support workflows for enterprise BI tools
+- Automated data extraction and reporting using SQL & Crystal Reports
+- Conducted system health monitoring and escalated production issues in global environments
+- Helped design and implement custom data solutions across verticals like retail and manufacturing
+
+========================================================================
+TECHNICAL EXPERTISE
+========================================================================
+
+Data Architecture: Data Mesh, Data Vault, Lambda Architecture, Event-Driven Architecture, Microservices
+Cloud Platforms: Microsoft Azure, Amazon AWS, Azure Data Factory, Databricks, Synapse Analytics
+Data Engineering: Apache Spark, Delta Lake, SSIS, ETL/ELT, Real-time Processing
+Analytics & BI: SSRS, SSAS, Power BI, Crystal Reports, Data Warehousing
+Tech Stack & Tools: Python, SQL, Spark, AWS, Azure, Databricks, Snowflake, dbt, Airflow, Terraform
+
+========================================================================
+AREAS OF EXPERTISE
+========================================================================
+
+Enterprise Data Architecture:
+- Modern data architecture patterns
+- Data mesh and domain-driven design
+- Event-driven architectures
+- Cloud-native data platforms
+
+Cloud Data Solutions:
+- Azure & AWS data services
+- Cloud migration strategies
+- Serverless data processing
+- Multi-cloud architectures
+
+Data Engineering & DevOps:
+- CI/CD for data workloads
+- Real-time data processing
+- Performance optimization
+- Data quality frameworks
+
+Data Management & Governance:
+- Master data management
+- Metadata management
+- Data governance frameworks
+- Reference data strategies
+
+========================================================================
+PHILOSOPHY
+========================================================================
+
+Practical Solutions:
+Nitesh believes in sharing real-world solutions that work, not just theoretical
+concepts. Every post is backed by hands-on experience and practical implementation
+across diverse industries.
+
+Continuous Learning:
+The data landscape evolves rapidly. He stays current with emerging technologies
+and shares insights about what's working in the field today, from traditional BI
+to modern data mesh architectures.
+
+Community First:
+Data architecture is a team sport. He believes in building communities, sharing
+knowledge, and helping others succeed in their data journeys through mentoring
+and knowledge transfer.
+
+========================================================================
+BLOG & ARTICLES (thedataarch.com/blog)
+========================================================================
+
+Featured Topics: Data Architecture, Data Management, Data Engineering, Data Governance, Data Security, AI Architecture
+
+Featured Series: "AI-First Data Architect" — A 10+ week journey exploring the architectural shift between data and AI.
+
+Recent Blog Posts:
+1. "From Fascination to Functionality: The Shift from Large Language Models to Multi-Agent Systems" (Feb 11, 2026)
+   - Explores the shift from single LLMs to collaborative Multi-Agent Systems with real-world examples and architecture patterns.
+
+2. "Comprehensive Guide to LLM Fundamentals for Data Professionals" (Feb 8, 2026)
+   - Deep dive into Large Language Models: tokenization, transformer architecture, attention mechanisms, and prompt engineering.
+
+3. "Is Traditional Data Architecture Dying?" (Feb 2, 2026)
+   - A deep architectural walkthrough of what breaks and what replaces it in the GenAI era.
+
+4. "The Architect's Dilemma: Redefining the Data Solution Architect in the Age of GenAI" (Jan 28, 2026)
+   - Why spending 10+ weeks relearning the architect's role — and why others should follow along.
+
+5. "Series Preview: The AI-First Data Architect" (Jan 18, 2026)
+   - Why this series exists and why now — a 10+ week journey exploring data and AI convergence.
+
+6. "Data Governance Is a Team Sport" (Aug 8, 2025)
+   - Data governance isn't a compliance checkbox — it's a shared culture of data quality, security, and purpose.
+
+Blog Stats: 22 total posts, 5 categories, 500+ readers
+
+========================================================================
+WEBSITE DESCRIPTION
+========================================================================
+
+"The Data Architecture" is Nitesh's personal blog offering expert insights on
+data management, architecture, and governance from a practicing data solution
+architect. The blog covers topics including Data Architecture, Data Engineering,
+Cloud Platforms, and Best Practices.

@@ -213,11 +213,12 @@ class Me:
 
     def _load_data(self):
         """
-        Reads your personal data from two sources and combines them
+        Reads your personal data from THREE sources and combines them
         into one big text block (self.context_data).
         
-        SOURCE 1: me/linkedin.pdf — Your LinkedIn profile exported as PDF
-        SOURCE 2: me/summary.txt  — Your bio, blog posts, achievements, etc.
+        SOURCE 1: me/linkedin.pdf  — Your LinkedIn profile exported as PDF
+        SOURCE 2: me/summary.txt   — Your bio, blog posts, achievements, etc.
+        SOURCE 3: me/website.txt   — Content scraped from your personal website (thedataarch.com)
         
         This combined text is what the AI uses to answer questions about you.
         The more detailed these files are, the better the AI can respond!
@@ -236,6 +237,14 @@ class Me:
         if os.path.exists(summary_path):
             with open(summary_path, "r", encoding="utf-8") as f:
                 self.context_data += "\n" + f.read()  # Append summary text to context
+
+        # --- Load Website Content ---
+        # This file contains scraped content from the personal website (thedataarch.com)
+        # including career journey, technical expertise, blog posts, and philosophy.
+        website_path = "me/website.txt"
+        if os.path.exists(website_path):
+            with open(website_path, "r", encoding="utf-8") as f:
+                self.context_data += "\n" + f.read()  # Append website content to context
 
     def system_prompt(self):
         """
@@ -377,13 +386,158 @@ class Me:
 # and start chatting with your AI persona.
 
 if __name__ == "__main__":
-    bot = Me()  # Create the persona (loads LinkedIn PDF + summary.txt)
+    bot = Me()  # Create the persona (loads LinkedIn PDF + summary.txt + website.txt)
 
-    # Launch the Gradio chat interface
-    # - bot.chat: The function that handles each message
-    # - title: The heading shown at the top of the chat page
-    # Note: Gradio 6.x uses the "messages" format by default, no need to specify type
-    gr.ChatInterface(
-        fn=bot.chat,
-        title=f"Chat with {bot.name}'s AI"
-    ).launch()
+    # ── Custom CSS for a polished, professional look ──
+    # This CSS is injected into the Gradio page to customize colors, fonts, and layout.
+    custom_css = """
+    /* Overall page styling */
+    .gradio-container {
+        font-family: 'Inter', 'Segoe UI', sans-serif !important;
+    }
+
+    /* Chat header / title styling */
+    h1 {
+        color: #1a1a2e !important;
+        text-align: center !important;
+        font-size: 2.2rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 0.2rem !important;
+    }
+
+    /* Description text below the title */
+    .prose p, .prose a {
+        color: #444466 !important;
+        text-align: center !important;
+    }
+    .prose a {
+        color: #667eea !important;
+        text-decoration: underline !important;
+    }
+
+    /* Chat container */
+    .chatbot {
+        background: #f8f8fc !important;
+        border: 1px solid #e0e0ee !important;
+        border-radius: 16px !important;
+    }
+
+    /* User message bubbles — purple gradient with white text */
+    .chatbot .message.user .bubble {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: #ffffff !important;
+        border-radius: 18px 18px 4px 18px !important;
+        padding: 12px 18px !important;
+    }
+
+    /* Bot message bubbles — light background with dark text */
+    .chatbot .message.bot .bubble {
+        background: #ffffff !important;
+        color: #1a1a2e !important;
+        border: 1px solid #e0e0ee !important;
+        border-radius: 18px 18px 18px 4px !important;
+        padding: 12px 18px !important;
+    }
+
+    /* Input textbox — dark text on light background for readability */
+    textarea, input[type="text"] {
+        background: #ffffff !important;
+        border: 1px solid #d0d0e0 !important;
+        border-radius: 12px !important;
+        color: #1a1a2e !important;
+        font-size: 1rem !important;
+        padding: 12px !important;
+    }
+    textarea::placeholder, input[type="text"]::placeholder {
+        color: #8888aa !important;
+    }
+    textarea:focus, input[type="text"]:focus {
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3) !important;
+    }
+
+    /* Ensure all general text and labels are visible */
+    label, .label-wrap, span, p {
+        color: #1a1a2e !important;
+    }
+
+    /* Send / Submit button */
+    button.primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        border: none !important;
+        border-radius: 12px !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        padding: 10px 24px !important;
+        transition: all 0.3s ease !important;
+    }
+    button.primary:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
+    }
+
+    /* Secondary buttons (Clear, etc.) */
+    button.secondary {
+        background: #f0f0f8 !important;
+        border: 1px solid #d0d0e0 !important;
+        border-radius: 12px !important;
+        color: #444466 !important;
+    }
+
+    /* Example buttons */
+    .example-btn {
+        background: #f0f0f8 !important;
+        border: 1px solid #d0d0e0 !important;
+        color: #444466 !important;
+        border-radius: 20px !important;
+        padding: 8px 16px !important;
+        font-size: 0.85rem !important;
+        transition: all 0.2s ease !important;
+    }
+    .example-btn:hover {
+        background: rgba(102, 126, 234, 0.15) !important;
+        border-color: #667eea !important;
+        color: #1a1a2e !important;
+    }
+
+    /* Footer area */
+    footer { display: none !important; }
+    """
+
+    # -- Description shown below the title --
+    description = (
+        "**AI-powered assistant** trained on Nitesh's resume, LinkedIn, website & blog content.\n\n"
+        "Ask me about professional experience, skills, projects, or blog posts!\n\n"
+        "[Website](https://thedataarch.com) | "
+        "[LinkedIn](https://www.linkedin.com/in/nsharma02/) | "
+        "[GitHub](https://github.com/Nits02)"
+    )
+
+    # ── Example prompts visitors can click on ──
+    examples = [
+        "Tell me about Nitesh's professional experience",
+        "What cloud platforms has he worked with?",
+        "What is the AI-First Data Architect blog series about?",
+        "What are his key achievements and impact?",
+        "What is his philosophy on data architecture?",
+    ]
+
+    # Launch the Gradio chat interface with the enhanced UI
+    # We use gr.Blocks to apply custom CSS, then embed ChatInterface inside it.
+    # - fn: The chat function that processes each message
+    # - title: Heading at the top of the page
+    # - description: Subtitle text with links
+    # - examples: Clickable sample questions for visitors
+    # - css: Custom styling for a dark, modern look (applied via Blocks)
+    # - theme: Gradio's built-in soft theme as the base with indigo accent
+    with gr.Blocks(
+        css=custom_css,
+        theme=gr.themes.Soft(primary_hue="indigo", neutral_hue="slate"),
+    ) as demo:
+        gr.ChatInterface(
+            fn=bot.chat,
+            title=f"Chat with {bot.name}'s AI",
+            description=description,
+            examples=examples,
+        )
+    demo.launch()
