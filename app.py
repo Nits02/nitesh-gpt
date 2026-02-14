@@ -311,7 +311,7 @@ class Me:
         # "tools" = the list of functions the AI is allowed to call
         try:
             response = client.chat.completions.create(
-                model="gemini-2.0-flash",
+                model="gemini-3-flash-preview",
                 messages=messages,
                 tools=tools
             )
@@ -358,7 +358,7 @@ class Me:
             # we ask Gemini to craft a nice reply to the visitor
             # (e.g., "Thanks! I've noted your email. Nitesh will be in touch soon.")
             final_response = client.chat.completions.create(
-                model="gemini-2.0-flash",
+                model="gemini-3-flash-preview",
                 messages=messages
             )
             return final_response.choices[0].message.content
