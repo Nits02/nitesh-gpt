@@ -1,3 +1,14 @@
+---
+title: Nitesh-GPT
+emoji: 🤖
+colorFrom: indigo
+colorTo: purple
+sdk: gradio
+sdk_version: "6.5.1"
+app_file: app.py
+pinned: false
+---
+
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
   <img src="https://img.shields.io/badge/Google%20Gemini-AI%20Powered-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini"/>
