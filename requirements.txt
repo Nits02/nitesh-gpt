@@ -1,9 +1,5 @@
 python-dotenv
 openai
-langchain
-langchain-community
-langchain-core
-langchain-text-splitters
 pypdf
-faiss-cpu
-streamlit
+requests
+gradio

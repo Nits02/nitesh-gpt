@@ -1,1 +1,20 @@
-This is a summary of your blog posts, bio, and resume. Please replace this text with your actual content.
+With 18+ years of progressive experience, I am a Lead Data Solution Architect passionate about transforming complex business challenges into scalable, secure, and high-performing data solutions. I specialize in designing, implementing, and optimizing data platforms and cloud-native architectures that unlock the power of analytics and AI across industries including Banking, Healthcare, Retail, and Public Sector.
+
+As a Microsoft Certified Azure Solution Architect Expert, I bring deep expertise across multi-cloud ecosystems (Azure & AWS) and modern data technologies including Databricks, Spark, Kafka, Synapse Analytics, and Data Lakehouse architectures.
+
+I thrive on leading cross-functional teams, defining data strategy roadmaps, and driving end-to-end delivery of large-scale data transformation initiatives — always with a focus on business value, cost efficiency, and innovation.
+
+⸻
+
+✨ Key Achievements & Impact
+	•	💰 Delivered significant savings: £53K annually via report automation and £40K per annum through licensing cost reduction.
+	•	⚡ Accelerated delivery: Reduced development effort by 20%, enabling 3 Azure use cases in <6 months.
+	•	📊 Performance gains: Optimized stored procedures, cutting report execution time by 30%.
+	•	☁️ Cloud transformation: Led seamless migrations (On-Prem → Azure/AWS) using 6R’s/TIME methodology with minimal disruption.
+	•	🔄 Efficiency at scale: Built metadata-driven ingestion frameworks, reducing onboarding effort by 20%.
+	•	👨‍🏫 Leadership: Mentored teams, fostering continuous learning and driving architectural best practices.
+
+⸻
+
+🌟 What Drives Me
+I believe data is more than a technology asset — it’s a strategic enabler. My passion lies in bridging business and technology to create data-driven ecosystems that power AI, enable innovation, and deliver measurable impact. I’m committed to continuous learning and staying at the forefront of Data & AI evolution.
