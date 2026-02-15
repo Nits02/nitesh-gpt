@@ -483,7 +483,10 @@ if __name__ == "__main__":
     /* ── Container ── */
     .gradio-container {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-        max-width: 850px !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
         margin: 0 auto !important;
         background: var(--c-bg) !important;
         padding: 12px !important;
@@ -714,10 +717,38 @@ if __name__ == "__main__":
         color: var(--c-text) !important;
     }
 
+    /* ── Full-width overrides for iframe embedding ── */
+    .gradio-container > .main {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+    .gradio-container .contain {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+    .chatbot, .gradio-chatbot {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
     /* ── Hide Gradio footer for clean embedding ── */
     footer { display: none !important; }
 
     /* ── Responsive Design for iframe / mobile embedding ── */
+    @media (max-width: 768px) {
+        .gradio-container,
+        .gradio-container > .main,
+        .gradio-container .contain,
+        .gradio-container .wrap {
+            max-width: 100% !important;
+            width: 100% !important;
+            overflow-x: hidden !important;
+        }
+        .chatbot, .gradio-chatbot {
+            max-width: 100% !important;
+            width: 100% !important;
+        }
+    }
     @media (max-width: 640px) {
         .gradio-container {
             padding: 6px !important;
