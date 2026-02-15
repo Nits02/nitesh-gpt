@@ -250,28 +250,34 @@ class Me:
         """
         Builds the "system prompt" — a set of instructions that tells the AI:
         - WHO it is (your name/persona)
-        - HOW it should behave (tone, style)
+        - HOW it should behave (tone, style, formatting)
         - WHAT data to use for answering (your resume/bio text)
         - WHEN to use tools (unknown questions, contact requests)
         
         This prompt is sent to Google Gemini at the start of every conversation.
         The AI follows these instructions for all its responses.
         """
-        return f"""
-        You are acting as {self.name}. You are an AI assistant on {self.name}'s portfolio website.
-        
-        Your Goal: Answer questions about professional background, skills, and experience.
-        Tone: Professional, engaging, and friendly.
-        
-        Instructions:
-        1. Use the Context below to answer questions faithfully.
-        2. If the user asks something NOT in the context, strictly use the 'record_unknown_question' tool.
-        3. If the user seems interested in hiring or collaborating, ask for their email and use 'record_user_details'.
-        4. Keep answers concise (under 4 sentences) unless asked for elaboration.
+        return f"""You are acting as {self.name}. You are an AI assistant on {self.name}'s personal portfolio website.
 
-        ## Context / Resume:
-        {self.context_data}
-        """
+Your Goal: Answer questions about {self.name}'s professional background, skills, experience, projects, and blog posts.
+
+Personality & Tone:
+- Professional yet warm and approachable — like a friendly colleague.
+- Speak in first person as {self.name} (e.g., "I have experience in…", "My work at…").
+- Show genuine enthusiasm when discussing technical topics.
+
+Response Guidelines:
+1. Use the Context below to answer questions faithfully and accurately.
+2. Format responses using **Markdown** (bold, bullet points, headers) to improve readability.
+3. Keep answers concise (3-5 sentences) unless the user explicitly asks for more detail.
+4. If the user greets you, respond warmly and briefly introduce yourself with a one-liner about your expertise.
+5. If the user asks something NOT covered in the Context, use the 'record_unknown_question' tool and let them know politely that you don't have that specific detail.
+6. If the user expresses interest in hiring, collaborating, or getting in touch, ask for their email and use 'record_user_details'.
+7. Never fabricate information not present in the Context.
+
+## Context / Resume:
+{self.context_data}
+"""
 
     def chat(self, message, history):
         """
@@ -316,17 +322,24 @@ class Me:
         messages.append({"role": "user", "content": message})
 
         # --- Send everything to Google Gemini and get a response ---
-        # "model" = which Gemini model to use (gemini-2.0-flash is fast and capable)
-        # "tools" = the list of functions the AI is allowed to call
+        # "model"       = which Gemini model to use
+        # "tools"       = the list of functions the AI is allowed to call
+        # "temperature" = controls creativity (0.7 = balanced)
+        # "max_tokens"  = caps response length to keep answers concise
         try:
             response = client.chat.completions.create(
-                model="gemini-3-flash-preview",
+                model="gemini-2.5-flash-lite",
                 messages=messages,
-                tools=tools
+                tools=tools,
+                temperature=0.7,
+                max_tokens=500,
             )
         except Exception as e:
             # If the API call fails (e.g., rate limit, network error), show a friendly message
-            return f"Sorry, I'm having trouble connecting right now. Please try again in a moment. (Error: {e})"
+            return (
+                "I'm sorry, I'm having a bit of trouble connecting right now. "
+                "Please try again in a moment. 🙏"
+            )
 
         # --- Check if the AI wants to call a tool (function) ---
         # Sometimes, instead of replying with text, the AI decides it needs to
@@ -343,8 +356,13 @@ class Me:
 
             # --- Execute each tool call ---
             for tool_call in tool_calls:
-                fn_name = tool_call.function.name               # Which function to call
-                args = json.loads(tool_call.function.arguments)  # The arguments (as a dict)
+                fn_name = tool_call.function.name  # Which function to call
+
+                # Safely parse the arguments (guard against malformed JSON)
+                try:
+                    args = json.loads(tool_call.function.arguments)
+                except json.JSONDecodeError:
+                    args = {}
 
                 # Match the function name and call the corresponding Python function
                 if fn_name == "record_user_details":
@@ -365,12 +383,19 @@ class Me:
             # --- Second API call: Get the AI's final text response ---
             # Now that the tool has been executed and results are in the messages,
             # we ask Gemini to craft a nice reply to the visitor
-            # (e.g., "Thanks! I've noted your email. Nitesh will be in touch soon.")
-            final_response = client.chat.completions.create(
-                model="gemini-3-flash-preview",
-                messages=messages
-            )
-            return final_response.choices[0].message.content
+            try:
+                final_response = client.chat.completions.create(
+                    model="gemini-2.5-flash-lite",
+                    messages=messages,
+                    temperature=0.7,
+                    max_tokens=500,
+                )
+                return final_response.choices[0].message.content
+            except Exception as e:
+                return (
+                    "I captured your information, but had trouble generating a response. "
+                    "Please try again! 🙏"
+                )
 
         # --- If no tool was called, just return the AI's text response directly ---
         return response.choices[0].message.content
@@ -388,130 +413,352 @@ class Me:
 if __name__ == "__main__":
     bot = Me()  # Create the persona (loads LinkedIn PDF + summary.txt + website.txt)
 
-    # ── Custom CSS for a polished, professional look ──
-    # This CSS is injected into the Gradio page to customize colors, fonts, and layout.
-    custom_css = """
-    /* Overall page styling */
-    .gradio-container {
-        font-family: 'Inter', 'Segoe UI', sans-serif !important;
-    }
-
-    /* Chat header / title styling */
-    h1 {
-        color: #1a1a2e !important;
-        text-align: center !important;
-        font-size: 2.2rem !important;
-        font-weight: 700 !important;
-        margin-bottom: 0.2rem !important;
-    }
-
-    /* Description text below the title */
-    .prose p, .prose a {
-        color: #444466 !important;
-        text-align: center !important;
-    }
-    .prose a {
-        color: #667eea !important;
-        text-decoration: underline !important;
-    }
-
-    /* Chat container */
-    .chatbot {
-        background: #f8f8fc !important;
-        border: 1px solid #e0e0ee !important;
-        border-radius: 16px !important;
-    }
-
-    /* User message bubbles — purple gradient with white text */
-    .chatbot .message.user .bubble {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-        color: #ffffff !important;
-        border-radius: 18px 18px 4px 18px !important;
-        padding: 12px 18px !important;
-    }
-
-    /* Bot message bubbles — light background with dark text */
-    .chatbot .message.bot .bubble {
-        background: #ffffff !important;
-        color: #1a1a2e !important;
-        border: 1px solid #e0e0ee !important;
-        border-radius: 18px 18px 18px 4px !important;
-        padding: 12px 18px !important;
-    }
-
-    /* Input textbox — dark text on light background for readability */
-    textarea, input[type="text"] {
-        background: #ffffff !important;
-        border: 1px solid #d0d0e0 !important;
-        border-radius: 12px !important;
-        color: #1a1a2e !important;
-        font-size: 1rem !important;
-        padding: 12px !important;
-    }
-    textarea::placeholder, input[type="text"]::placeholder {
-        color: #8888aa !important;
-    }
-    textarea:focus, input[type="text"]:focus {
-        border-color: #667eea !important;
-        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3) !important;
-    }
-
-    /* Ensure all general text and labels are visible */
-    label, .label-wrap, span, p {
-        color: #1a1a2e !important;
-    }
-
-    /* Send / Submit button */
-    button.primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-        border: none !important;
-        border-radius: 12px !important;
-        color: #ffffff !important;
-        font-weight: 600 !important;
-        padding: 10px 24px !important;
-        transition: all 0.3s ease !important;
-    }
-    button.primary:hover {
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
-    }
-
-    /* Secondary buttons (Clear, etc.) */
-    button.secondary {
-        background: #f0f0f8 !important;
-        border: 1px solid #d0d0e0 !important;
-        border-radius: 12px !important;
-        color: #444466 !important;
-    }
-
-    /* Example buttons */
-    .example-btn {
-        background: #f0f0f8 !important;
-        border: 1px solid #d0d0e0 !important;
-        color: #444466 !important;
-        border-radius: 20px !important;
-        padding: 8px 16px !important;
-        font-size: 0.85rem !important;
-        transition: all 0.2s ease !important;
-    }
-    .example-btn:hover {
-        background: rgba(102, 126, 234, 0.15) !important;
-        border-color: #667eea !important;
-        color: #1a1a2e !important;
-    }
-
-    /* Footer area */
-    footer { display: none !important; }
+    # ── Branded Header HTML ──
+    # A custom header with icon, title, subtitle, and social links.
+    # Gives the chatbot a polished, professional identity.
+    header_html = """
+    <div class="chat-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
+                     stroke="white" stroke-width="2" stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="header-title">Chat with Nitesh Sharma's AI</div>
+                <div class="header-subtitle">
+                    AI assistant trained on resume, LinkedIn, website &amp; blog content
+                </div>
+            </div>
+        </div>
+        <div class="header-links">
+            <a href="https://thedataarch.com" target="_blank">🌐 Website</a>
+            <span class="link-sep">·</span>
+            <a href="https://www.linkedin.com/in/nsharma02/" target="_blank">💼 LinkedIn</a>
+            <span class="link-sep">·</span>
+            <a href="https://github.com/Nits02" target="_blank">💻 GitHub</a>
+        </div>
+    </div>
     """
 
-    # -- Description shown below the title --
-    description = (
-        "**AI-powered assistant** trained on Nitesh's resume, LinkedIn, website & blog content.\n\n"
-        "Ask me about professional experience, skills, projects, or blog posts!\n\n"
-        "[Website](https://thedataarch.com) | "
-        "[LinkedIn](https://www.linkedin.com/in/nsharma02/) | "
-        "[GitHub](https://github.com/Nits02)"
+    # ── Chatbot Placeholder (Welcome Screen) ──
+    # Shown inside the chatbot area when no messages exist yet.
+    # Disappears as soon as the first message is sent.
+    # Gradio 6.x renders placeholder as plain text, so keep it simple.
+    chatbot_placeholder = (
+        "💬  Welcome! I'm Nitesh's AI Assistant.\n"
+        "Ask me about professional experience, skills, projects, blog posts, or anything else!\n\n"
+        "💡 Try one of the suggested prompts below, or type your own question."
     )
+
+    # ── Comprehensive CSS — Designed for Gradio 6.x ──
+    # Modern, clean design with consistent color palette, smooth transitions,
+    # and responsive layout for embedding in iframes (HF Spaces).
+    custom_css = """
+    /* ── Google Font ── */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    /* ── Design Tokens ── */
+    :root {
+        --c-primary: #667eea;
+        --c-primary-hover: #5a6fd6;
+        --c-accent: #764ba2;
+        --c-bg: #f4f5fa;
+        --c-surface: #ffffff;
+        --c-text: #16213e;
+        --c-text-secondary: #555577;
+        --c-text-muted: #8b8baa;
+        --c-border: #e2e4f0;
+        --c-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-pill: 9999px;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+        --shadow-md: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    /* ── Container ── */
+    .gradio-container {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        max-width: 850px !important;
+        margin: 0 auto !important;
+        background: var(--c-bg) !important;
+        padding: 12px !important;
+    }
+
+    /* ── Branded Header ── */
+    .chat-header {
+        background: var(--c-surface);
+        border-radius: var(--radius-lg);
+        padding: 20px 24px 16px;
+        margin-bottom: 10px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--c-border);
+    }
+    .header-content {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        justify-content: center;
+    }
+    .header-icon {
+        width: 48px;
+        height: 48px;
+        background: var(--c-gradient);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+    .header-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--c-text);
+        line-height: 1.3;
+    }
+    .header-subtitle {
+        font-size: 0.83rem;
+        color: var(--c-text-secondary);
+        margin-top: 2px;
+        font-weight: 400;
+    }
+    .header-links {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid var(--c-border);
+    }
+    .header-links a {
+        color: var(--c-primary) !important;
+        text-decoration: none !important;
+        font-size: 0.82rem;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    .header-links a:hover {
+        color: var(--c-accent) !important;
+    }
+    .link-sep {
+        color: var(--c-text-muted);
+        font-size: 0.7rem;
+    }
+
+    /* ── Suppress default ChatInterface title/desc (we have custom header) ── */
+    .chat-interface-title, .gradio-container h1 {
+        display: none !important;
+    }
+    .chat-interface .prose, .gradio-container > .prose {
+        display: none !important;
+    }
+
+    /* ── Chatbot placeholder text styling ── */
+    .chatbot .placeholder,
+    .gradio-chatbot .placeholder {
+        color: var(--c-text-secondary) !important;
+        font-size: 0.95rem !important;
+        text-align: center !important;
+        padding: 40px 20px !important;
+        white-space: pre-line !important;
+        line-height: 1.7 !important;
+    }
+
+    /* ── Chatbot Container ── */
+    .chatbot, .gradio-chatbot {
+        border-radius: var(--radius-lg) !important;
+        border: 1px solid var(--c-border) !important;
+        background: var(--c-bg) !important;
+        box-shadow: var(--shadow-sm) !important;
+    }
+
+    /* ── Message Bubbles — User (gradient) ── */
+    .message-row.user-row .message-bubble,
+    .chatbot .user .message-bubble-border,
+    .message.user .bubble-wrap .bubble {
+        background: var(--c-gradient) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 18px 18px 4px 18px !important;
+        padding: 10px 16px !important;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25) !important;
+    }
+    .message-row.user-row .message-content,
+    .chatbot .user .message-content,
+    .message.user .bubble-wrap .bubble * {
+        color: #ffffff !important;
+    }
+
+    /* ── Message Bubbles — Bot (clean white) ── */
+    .message-row.bot-row .message-bubble,
+    .chatbot .bot .message-bubble-border,
+    .message.bot .bubble-wrap .bubble {
+        background: var(--c-surface) !important;
+        color: var(--c-text) !important;
+        border: 1px solid var(--c-border) !important;
+        border-radius: 18px 18px 18px 4px !important;
+        padding: 10px 16px !important;
+        box-shadow: var(--shadow-sm) !important;
+    }
+    .message-row.bot-row .message-content,
+    .chatbot .bot .message-content,
+    .message.bot .bubble-wrap .bubble * {
+        color: var(--c-text) !important;
+    }
+
+    /* ── Markdown inside bot messages ── */
+    .chatbot .bot .message-content strong,
+    .message.bot .bubble-wrap strong {
+        color: var(--c-text) !important;
+        font-weight: 600 !important;
+    }
+    .chatbot .bot .message-content a,
+    .message.bot .bubble-wrap a {
+        color: var(--c-primary) !important;
+        text-decoration: underline !important;
+    }
+    .chatbot .bot .message-content code,
+    .message.bot .bubble-wrap code {
+        background: #f0f1f7 !important;
+        padding: 2px 6px !important;
+        border-radius: 4px !important;
+        font-size: 0.85em !important;
+    }
+
+    /* ── Input Textbox ── */
+    textarea, input[type="text"] {
+        border-radius: var(--radius-md) !important;
+        border: 1.5px solid var(--c-border) !important;
+        background: var(--c-surface) !important;
+        color: var(--c-text) !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 0.95rem !important;
+        padding: 12px 16px !important;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    textarea:focus, input[type="text"]:focus {
+        border-color: var(--c-primary) !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
+        outline: none !important;
+    }
+    textarea::placeholder, input[type="text"]::placeholder {
+        color: var(--c-text-muted) !important;
+    }
+
+    /* ── Primary Button (Send) ── */
+    button.primary, .submit-btn {
+        background: var(--c-gradient) !important;
+        border: none !important;
+        border-radius: var(--radius-md) !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        font-family: 'Inter', sans-serif !important;
+        padding: 10px 22px !important;
+        transition: transform 0.15s ease, box-shadow 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    button.primary:hover, .submit-btn:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: var(--shadow-md), 0 4px 14px rgba(102, 126, 234, 0.3) !important;
+    }
+    button.primary:active, .submit-btn:active {
+        transform: translateY(0) !important;
+    }
+
+    /* ── Secondary / Utility Buttons (Retry, Undo, Clear) ── */
+    button.secondary, .undo-btn, .retry-btn, .clear-btn {
+        background: var(--c-surface) !important;
+        border: 1px solid var(--c-border) !important;
+        border-radius: var(--radius-sm) !important;
+        color: var(--c-text-secondary) !important;
+        font-family: 'Inter', sans-serif !important;
+        transition: all 0.2s ease !important;
+    }
+    button.secondary:hover, .undo-btn:hover, .retry-btn:hover, .clear-btn:hover {
+        border-color: var(--c-primary) !important;
+        color: var(--c-primary) !important;
+        background: rgba(102, 126, 234, 0.04) !important;
+    }
+
+    /* ── Example Prompt Buttons ── */
+    .examples button, button.example-btn, .example-btn,
+    .gallery-item, table.examples button {
+        background: var(--c-surface) !important;
+        border: 1px solid var(--c-border) !important;
+        border-radius: var(--radius-pill) !important;
+        color: var(--c-text-secondary) !important;
+        padding: 8px 18px !important;
+        font-size: 0.82rem !important;
+        font-weight: 500 !important;
+        font-family: 'Inter', sans-serif !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .examples button:hover, button.example-btn:hover, .example-btn:hover,
+    .gallery-item:hover, table.examples button:hover {
+        background: rgba(102, 126, 234, 0.06) !important;
+        border-color: var(--c-primary) !important;
+        color: var(--c-primary) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.12) !important;
+    }
+
+    /* ── Labels & Text ── */
+    label, .label-wrap, span, p {
+        color: var(--c-text) !important;
+    }
+
+    /* ── Hide Gradio footer for clean embedding ── */
+    footer { display: none !important; }
+
+    /* ── Responsive Design for iframe / mobile embedding ── */
+    @media (max-width: 640px) {
+        .gradio-container {
+            padding: 6px !important;
+        }
+        .chat-header {
+            padding: 14px 16px 12px;
+            border-radius: var(--radius-md);
+            margin-bottom: 6px;
+        }
+        .header-title {
+            font-size: 1.05rem;
+        }
+        .header-subtitle {
+            font-size: 0.78rem;
+        }
+        .header-content {
+            gap: 10px;
+        }
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+        }
+        .header-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+        .header-links {
+            gap: 8px;
+        }
+        .header-links a {
+            font-size: 0.78rem;
+        }
+        .welcome-screen {
+            padding: 32px 16px;
+        }
+        .welcome-screen h3 {
+            font-size: 1rem;
+        }
+    }
+    """
 
     # ── Example prompts visitors can click on ──
     examples = [
@@ -522,22 +769,35 @@ if __name__ == "__main__":
         "What is his philosophy on data architecture?",
     ]
 
-    # Launch the Gradio chat interface with the enhanced UI
-    # We use gr.Blocks to apply custom CSS, then embed ChatInterface inside it.
-    # - fn: The chat function that processes each message
-    # - title: Heading at the top of the page
-    # - description: Subtitle text with links
-    # - examples: Clickable sample questions for visitors
-    # - css: Custom styling for a dark, modern look (applied via Blocks)
-    # - theme: Gradio's built-in soft theme as the base with indigo accent
+    # ── Build & Launch the Interface ──
+    # Uses gr.Blocks for full layout control with a custom header,
+    # then embeds ChatInterface for robust chat functionality.
     with gr.Blocks(
-        css=custom_css,
-        theme=gr.themes.Soft(primary_hue="indigo", neutral_hue="slate"),
+        title="Chat with Nitesh Sharma's AI",
     ) as demo:
+
+        # Custom branded header (above the chatbot)
+        gr.HTML(header_html)
+
+        # Chat interface with pre-configured chatbot and textbox
         gr.ChatInterface(
             fn=bot.chat,
-            title=f"Chat with {bot.name}'s AI",
-            description=description,
             examples=examples,
+            chatbot=gr.Chatbot(
+                height=480,
+                show_label=False,
+                placeholder=chatbot_placeholder,
+            ),
+            textbox=gr.Textbox(
+                placeholder="Ask me anything about Nitesh…",
+                show_label=False,
+                scale=7,
+            ),
         )
-    demo.launch(server_name="0.0.0.0", server_port=7860)
+
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=7860,
+        css=custom_css,
+        theme=gr.themes.Soft(primary_hue="indigo", neutral_hue="slate"),
+    )
